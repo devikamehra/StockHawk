@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:contentDescription="@string/no_internet_error_msg"
+        android:id="@+id/error_image"
+        android:visibility="gone"
+        android:src="@drawable/error"
+        android:paddingTop="@dimen/error_image_padding_top"
+        android:paddingBottom="@dimen/error_image_padding_top"
+        android:paddingLeft="@dimen/error_image_horizontal_padding"
+        android:paddingRight="@dimen/error_image_horizontal_padding"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent" />
+
+    <TextView
+        android:id="@+id/error_text"
+        android:contentDescription="@string/no_internet_message"
+        android:visibility="gone"
+        android:text="@string/network_toast"
+        android:textAppearance="@android:style/TextAppearance.Large"
+        android:textColor="@android:color/white"
+        android:paddingTop="@dimen/error_image_padding_top"
+        android:paddingBottom="@dimen/error_image_padding_top"
+        android:paddingLeft="@dimen/error_image_horizontal_padding"
+        android:paddingRight="@dimen/error_image_horizontal_padding"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+</LinearLayout>

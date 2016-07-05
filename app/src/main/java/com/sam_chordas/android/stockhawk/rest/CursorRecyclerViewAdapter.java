@@ -5,6 +5,8 @@ import android.database.Cursor;
 import android.database.DataSetObserver;
 import android.support.v7.widget.RecyclerView;
 
+import com.sam_chordas.android.stockhawk.R;
+
 /**
  * Created by sam_chordas on 10/6/15.
  *  Credit to skyfishjy gist:
@@ -12,15 +14,19 @@ import android.support.v7.widget.RecyclerView;
  * for the CursorRecyclerViewApater.java code and idea.
  */
 public abstract class CursorRecyclerViewAdapter <VH extends RecyclerView.ViewHolder> extends RecyclerView.Adapter<VH>{
-  private static final String LOG_TAG = CursorRecyclerViewAdapter.class.getSimpleName();
+
   private Cursor mCursor;
   private boolean dataIsValid;
   private int rowIdColumn;
   private DataSetObserver mDataSetObserver;
+  Context context;
+  public static final String COLUMN_ID = "_id";
+
   public CursorRecyclerViewAdapter(Context context, Cursor cursor){
+    this.context = context;
     mCursor = cursor;
     dataIsValid = cursor != null;
-    rowIdColumn = dataIsValid ? mCursor.getColumnIndex("_id") : -1;
+    rowIdColumn = dataIsValid ? mCursor.getColumnIndex(COLUMN_ID) : -1;
     mDataSetObserver = new NotifyingDataSetObserver();
     if (dataIsValid){
       mCursor.registerDataSetObserver(mDataSetObserver);
@@ -55,10 +61,10 @@ public abstract class CursorRecyclerViewAdapter <VH extends RecyclerView.ViewHol
   @Override
   public void onBindViewHolder(VH viewHolder, int position) {
     if (!dataIsValid){
-      throw new IllegalStateException("This should only be called when Cursor is valid");
+      throw new IllegalStateException(context.getString(R.string.invalid_cursor_error));
     }
     if (!mCursor.moveToPosition(position)){
-      throw new IllegalStateException("Could not move Cursor to position: " + position);
+      throw new IllegalStateException(context.getString(R.string.move_cursor_error) + position);
     }
 
     onBindViewHolder(viewHolder, mCursor);
@@ -77,7 +83,7 @@ public abstract class CursorRecyclerViewAdapter <VH extends RecyclerView.ViewHol
       if (mDataSetObserver != null){
         mCursor.registerDataSetObserver(mDataSetObserver);
       }
-      rowIdColumn = newCursor.getColumnIndexOrThrow("_id");
+      rowIdColumn = newCursor.getColumnIndexOrThrow(COLUMN_ID);
       dataIsValid = true;
       notifyDataSetChanged();
     }else{

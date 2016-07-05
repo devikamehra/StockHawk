@@ -12,10 +12,12 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.sam_chordas.android.stockhawk.R;
+import com.sam_chordas.android.stockhawk.SharedPreferenceManager;
 import com.sam_chordas.android.stockhawk.data.QuoteColumns;
 import com.sam_chordas.android.stockhawk.data.QuoteProvider;
 import com.sam_chordas.android.stockhawk.touch_helper.ItemTouchHelperAdapter;
 import com.sam_chordas.android.stockhawk.touch_helper.ItemTouchHelperViewHolder;
+import com.sam_chordas.android.stockhawk.ui.LineGraphActivity;
 
 /**
  * Created by sam_chordas on 10/6/15.
@@ -26,9 +28,9 @@ import com.sam_chordas.android.stockhawk.touch_helper.ItemTouchHelperViewHolder;
 public class QuoteCursorAdapter extends CursorRecyclerViewAdapter<QuoteCursorAdapter.ViewHolder>
     implements ItemTouchHelperAdapter{
 
+  public static final String IS_UP = "is_up";
   private static Context mContext;
   private static Typeface robotoLight;
-  private boolean isPercent;
   public QuoteCursorAdapter(Context context, Cursor cursor){
     super(context, cursor);
     mContext = context;
@@ -36,19 +38,19 @@ public class QuoteCursorAdapter extends CursorRecyclerViewAdapter<QuoteCursorAda
 
   @Override
   public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType){
-    robotoLight = Typeface.createFromAsset(mContext.getAssets(), "fonts/Roboto-Light.ttf");
-    View itemView = LayoutInflater.from(parent.getContext())
-        .inflate(R.layout.list_item_quote, parent, false);
-    ViewHolder vh = new ViewHolder(itemView);
-    return vh;
+    robotoLight = Typeface.createFromAsset(mContext.getAssets(), mContext.getString(R.string.font_roboto_light));
+    View itemView;
+      itemView = LayoutInflater.from(parent.getContext())
+              .inflate(R.layout.list_item_quote, parent, false);
+    return new ViewHolder(itemView);
   }
 
   @Override
   public void onBindViewHolder(final ViewHolder viewHolder, final Cursor cursor){
-    viewHolder.symbol.setText(cursor.getString(cursor.getColumnIndex("symbol")));
-    viewHolder.bidPrice.setText(cursor.getString(cursor.getColumnIndex("bid_price")));
+    viewHolder.symbol.setText(cursor.getString(cursor.getColumnIndex(LineGraphActivity.COLUMN_SYMBOL)));
+    viewHolder.bidPrice.setText(cursor.getString(cursor.getColumnIndex(LineGraphActivity.COLUMN_BID_PRICE)));
     int sdk = Build.VERSION.SDK_INT;
-    if (cursor.getInt(cursor.getColumnIndex("is_up")) == 1){
+    if (cursor.getInt(cursor.getColumnIndex(IS_UP)) == 1){
       if (sdk < Build.VERSION_CODES.JELLY_BEAN){
         viewHolder.change.setBackgroundDrawable(
             mContext.getResources().getDrawable(R.drawable.percent_change_pill_green));
@@ -65,10 +67,10 @@ public class QuoteCursorAdapter extends CursorRecyclerViewAdapter<QuoteCursorAda
             mContext.getResources().getDrawable(R.drawable.percent_change_pill_red));
       }
     }
-    if (Utils.showPercent){
-      viewHolder.change.setText(cursor.getString(cursor.getColumnIndex("percent_change")));
+    if (SharedPreferenceManager.getShowPercentage()){
+      viewHolder.change.setText(cursor.getString(cursor.getColumnIndex(LineGraphActivity.COLUMN_PERCENT_CHANGE)));
     } else{
-      viewHolder.change.setText(cursor.getString(cursor.getColumnIndex("change")));
+      viewHolder.change.setText(cursor.getString(cursor.getColumnIndex(LineGraphActivity.COLUMN_CHANGE)));
     }
   }
 
